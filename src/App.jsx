@@ -1,20 +1,42 @@
-import { useState } from 'react'
-import Formulario from '../Formulario'
+import { useState, useEffect } from 'react'
+import { getAll } from './Services/ProductosService'
 
 function App() {
-  const [titulo, setTitulo] = useState('clase de react')
-  const [texto, setTexto] = useState('')
 
-  return (
-    <div className="App">
-      {/* <Formulario/> */}
-      <h1>{titulo}</h1>
-      <p>Contenido de clase {texto}</p>
-      <button onClick={()=>setTexto('2021')}>Agregar</button>
-      <button onClick={()=>setTexto('')}>Limpiar</button>
-      <button onClick={()=>setTitulo('Nuevo titulo')}>Nuevo titulo</button>
-    </div>
+  const [productos, setProductos] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(
+    ()=>{
+      getAll()
+      .then(res=>{
+        console.log(res)
+        if (res.data.results){
+          setProductos(res.data.results)
+          setLoading(false)
+        }
+      })
+    },[]
   )
-}
+
+  if(loading){
+    return(
+      <div>Loading...</div>
+    )
+  }
+    else{
+      return(
+        <>
+          Listado de productos
+          {productos.map( producto =>
+            <>
+              <p>{producto.title}</p>
+              <p>{producto.price}</p> 
+            </>
+            )}
+        </>
+      )
+    }
+  }
 
 export default App
